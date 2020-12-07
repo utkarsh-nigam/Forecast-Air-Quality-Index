@@ -15,6 +15,9 @@ def ADF_Cal(tempData):
         print("\t", key, ": ", value)
 
 
+
+
+
 data1=pd.read_csv("city_hour.csv")
 data1=data1[data1["City"]=="Delhi"]
 data1["Datetime"]=pd.to_datetime(data1["Datetime"])
