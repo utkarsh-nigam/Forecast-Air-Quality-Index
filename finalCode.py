@@ -25,7 +25,7 @@ y=data["AQI"]
 # Plot of the dependent variable versus time
 
 plt.figure()
-plt.plot(data["Datetime"], data["AQI"])
+plt.plot(data.index, data["AQI"])
 plt.title("Dependant Variable AQI vs Time")
 plt.xlabel("Time")
 plt.ylabel("AQI")
@@ -64,7 +64,13 @@ plt.show()
 # Split the dataset into train set (80%) and test set (20%)
 
 y = data["AQI"]
-y_train, y_test = train_test_split(y, test_size=0.2, shuffle=False)
+independantVariables=list(data.columns)
+independantVariables.remove("AQI")
+x=data[independantVariables]
+for colValue in independantVariables:
+    x[colValue].fillna(value=x[colValue].mean(),inplace=True)
+
+x_train,y_train,x_test, y_test = train_test_split(x,y, test_size=0.2, shuffle=False)
 hSteps=len(y_test)
 trainingCount=len(y_train)
 
@@ -136,11 +142,6 @@ plt.show()
 # feature selection was performed. Forward and backward stepwise regression is needed.
 # You must explain that which feature(s) need to be eliminated and why.
 
-independantVariables=list(data.columns)
-independantVariables.remove("AQI")
-for colValue in independantVariables:
-    data[colValue].fillna(value=data[colValue].mean(),inplace=True)
-
 pValueThreshold=0.05
 totalFeatures=independantVariables.copy()
 forwardStepwiseList=[]
@@ -153,7 +154,7 @@ while len(forwardStepwiseList) < len(independantVariables):
     bicDict={}
     for featureValue in totalFeatures:
         currentFeatureList=forwardStepwiseList+[featureValue]
-        X = data[currentFeatureList]
+        X = x_train[currentFeatureList]
         X = sm.add_constant(X)
         tempModel = sm.OLS(y, X).fit()
         if (tempModel.f_pvalue < pValueThreshold):
@@ -192,7 +193,7 @@ while len(totalFeatures)>0:
     adjRSquaredDict={}
     # aicDict={}
     # bicDict={}
-    X = data[totalFeatures]
+    X = x_train[totalFeatures]
     X = sm.add_constant(X)
     tempModel = sm.OLS(y, X).fit()
     checkPValueDict = dict(tempModel.pvalues)
@@ -208,7 +209,7 @@ while len(totalFeatures)>0:
             for featureValue in totalFeatures:
                 tempList=totalFeatures.copy()
                 tempList.remove(featureValue)
-                X = data[totalFeatures]
+                X = x_train[totalFeatures]
                 X = sm.add_constant(X)
                 tempModel = sm.OLS(y, X).fit()
                 if (tempModel.f_pvalue < pValueThreshold):
@@ -251,16 +252,14 @@ totalFeatures=independantVariables.copy()
 forwardStepwiseList=[]
 featuresFinal={}
 dataframeDict={"Features":[],"Adj R-Squared":[],"AIC":[],"BIC":[]}
-previousValue=10000
+previousValue=10000000
 while len(forwardStepwiseList) < len(independantVariables):
-    print("Here")
     adjRSquaredDict={}
     aicDict={}
     bicDict={}
     for featureValue in totalFeatures:
-        print(featureValue)
         currentFeatureList=forwardStepwiseList+[featureValue]
-        X = data[currentFeatureList]
+        X = x_train[currentFeatureList]
         X = sm.add_constant(X)
         tempModel = sm.OLS(y, X).fit()
         if (tempModel.f_pvalue < pValueThreshold):
@@ -294,10 +293,10 @@ backwardStepwiseList=[]
 featuresFinal={}
 dataframeDict={"Features":[],"Adj R-Squared":[],"AIC":[],"BIC":[]}
 
-previousValue=10000
+previousValue=10000000
 while len(totalFeatures)>0:
     aicDict={}
-    X = data[totalFeatures]
+    X = x_train[totalFeatures]
     X = sm.add_constant(X)
     tempModel = sm.OLS(y, X).fit()
     checkPValueDict = dict(tempModel.pvalues)
@@ -313,7 +312,7 @@ while len(totalFeatures)>0:
             for featureValue in totalFeatures:
                 tempList=totalFeatures.copy()
                 tempList.remove(featureValue)
-                X = data[totalFeatures]
+                X = x_train[totalFeatures]
                 X = sm.add_constant(X)
                 tempModel = sm.OLS(y, X).fit()
                 if (tempModel.f_pvalue < pValueThreshold):
@@ -333,12 +332,12 @@ while len(totalFeatures)>0:
         removeFeature=max(checkPValueDict, key=checkPValueDict.get)
 
     totalFeatures.remove(removeFeature)
-print(dataframeDict)
+
 dfBackward=pd.DataFrame(dataframeDict,index=np.arange(1,len(featuresFinal.keys())+1))
 pd.set_option('display.max_columns', None)
 print("\n\nResults after Backward Elimination Regression:\n",dfBackward)
 
-# print("\nFeatures Selected after Forward Selection Regression:\n",np.sort(dfForward.iloc[-1,0]))
+print("\nFeatures Selected after Forward Selection Regression:\n",np.sort(dfForward.iloc[-1,0]))
 print("\nFeatures Selected after Backward Elimination Regression:\n",np.sort(dfBackward.iloc[-1,0]))
 
 print(50*"*")
@@ -355,14 +354,14 @@ totalFeatures=independantVariables.copy()
 forwardStepwiseList=[]
 featuresFinal={}
 dataframeDict={"Features":[],"Adj R-Squared":[],"AIC":[],"BIC":[]}
-previousValue=10000
+previousValue=10000000
 while len(forwardStepwiseList) < len(independantVariables):
     adjRSquaredDict={}
     aicDict={}
     bicDict={}
     for featureValue in totalFeatures:
         currentFeatureList=forwardStepwiseList+[featureValue]
-        X = data[currentFeatureList]
+        X = x_train[currentFeatureList]
         X = sm.add_constant(X)
         tempModel = sm.OLS(y, X).fit()
         if (tempModel.f_pvalue < pValueThreshold):
@@ -395,12 +394,12 @@ totalFeatures=independantVariables.copy()
 backwardStepwiseList=[]
 featuresFinal={}
 dataframeDict={"Features":[],"Adj R-Squared":[],"AIC":[],"BIC":[]}
-previousValue=10000
+previousValue=10000000
 while len(totalFeatures)>0:
     bicDict={}
     # aicDict={}
     # bicDict={}
-    X = data[totalFeatures]
+    X = x_train[totalFeatures]
     X = sm.add_constant(X)
     tempModel = sm.OLS(y, X).fit()
     checkPValueDict = dict(tempModel.pvalues)
@@ -416,7 +415,7 @@ while len(totalFeatures)>0:
             for featureValue in totalFeatures:
                 tempList=totalFeatures.copy()
                 tempList.remove(featureValue)
-                X = data[totalFeatures]
+                X = x_train[totalFeatures]
                 X = sm.add_constant(X)
                 tempModel = sm.OLS(y, X).fit()
                 if (tempModel.f_pvalue < pValueThreshold):
@@ -440,8 +439,8 @@ while len(totalFeatures)>0:
 dfBackward=pd.DataFrame(dataframeDict,index=np.arange(1,len(featuresFinal.keys())+1))
 pd.set_option('display.max_columns', None)
 print("\n\nResults after Backward Elimination Regression:\n",dfBackward)
-dfForward.to_csv("forward.csv")
-dfBackward.to_csv("backward.csv")
+# dfForward.to_csv("forward.csv")
+# dfBackward.to_csv("backward.csv")
 print("\nFeatures Selected after Forward Selection Regression:\n",np.sort(dfForward.iloc[-1,0]))
 print("\nFeatures Selected after Backward Elimination Regression:\n",np.sort(dfBackward.iloc[-1,0]))
 
@@ -451,14 +450,19 @@ print(50*"*","\n\n")
 
 print(50*"*","\n\t\t\t\tFinal Model")
 print(50*"*")
-featuresPrint=' '.join([str(elem) for elem in np.sort(dfBackward.iloc[-1,0])])
+featuresPrint=' '.join([str(elem) for elem in np.sort(dfForward.iloc[-1,0])])
 print("\nFeatures Selected: ",featuresPrint)
-X = data[list(dfBackward.iloc[-1,0])]
+X = x_train[list(dfForward.iloc[-1,0])]
 X = sm.add_constant(X)
 tempModel = sm.OLS(y, X).fit()
 print("\n\n",tempModel.summary())
 
+X = x_test[list(dfForward.iloc[-1,0])]
+X = sm.add_constant(X)
+predictedResults=tempModel.predict(X)
 
 
-titlePlot = "GPAC Table: Air Quality Index (New Delhi)"
-tst.GPAC_Cal(y_ACF, 8, 8, titlePlot)
+
+
+# titlePlot = "GPAC Table: Air Quality Index (New Delhi)"
+# tst.GPAC_Cal(y_ACF, 8, 8, titlePlot)
