@@ -96,7 +96,7 @@ def movingAverageCalculator(y, m, fold=0):
             return (np.concatenate((tempArray, movingAverage)))
 
 
-def GPAC_Cal(acf_series, rows, columns, plotTitle="GPAC Table"):
+def GPAC_Cal(acf_series, rows, columns, plotTitle="GPAC Table",figSize=(8, 8)):
     tableData = np.empty((rows + 1, columns))
     tableData[:] = np.NaN
     for j in range(0, rows + 1):
@@ -117,7 +117,7 @@ def GPAC_Cal(acf_series, rows, columns, plotTitle="GPAC Table"):
 
     yticks = np.arange(0, rows + 1, dtype=np.int)
     xticks = np.arange(1, columns + 1, dtype=np.int)
-    plt.figure()
+    plt.figure(figsize=figSize)
     plot = sns.heatmap(tableData, annot=True, fmt=".3f", yticklabels=yticks, xticklabels=xticks)
     plot.set_yticklabels(plot.get_yticklabels(), rotation=0, fontsize=8, va="center")
     plt.rcParams.update({'font.size': 8})
