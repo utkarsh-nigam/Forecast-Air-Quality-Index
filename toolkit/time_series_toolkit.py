@@ -7,6 +7,9 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
+with np.errstate(divide='ignore'):
+    np.float64(1.0) / 0.0
+
 def ADF_Cal(tempData,thresholdValue=0.05):
     results = adfuller(tempData)
     print("ADF Statistic: ", results[0])
@@ -96,7 +99,7 @@ def movingAverageCalculator(y, m, fold=0):
             return (np.concatenate((tempArray, movingAverage)))
 
 
-def GPAC_Cal(acf_series, rows, columns, plotTitle="GPAC Table",figSize=(8, 8)):
+def GPAC_Cal(acf_series, rows, columns, plotTitle="GPAC Table",figSize=(8, 8),minSize=0):
     tableData = np.empty((rows + 1, columns))
     tableData[:] = np.NaN
     for j in range(0, rows + 1):
@@ -118,7 +121,10 @@ def GPAC_Cal(acf_series, rows, columns, plotTitle="GPAC Table",figSize=(8, 8)):
     yticks = np.arange(0, rows + 1, dtype=np.int)
     xticks = np.arange(1, columns + 1, dtype=np.int)
     plt.figure(figsize=figSize)
-    plot = sns.heatmap(tableData, annot=True, fmt=".3f", yticklabels=yticks, xticklabels=xticks)
+    if minSize==0:
+        plot = sns.heatmap(tableData, annot=True, fmt=".3f", yticklabels=yticks, xticklabels=xticks)
+    else:
+        plot = sns.heatmap(tableData, annot=True, fmt=".3f", yticklabels=yticks, xticklabels=xticks, vmin=-1*minSize, vmax=minSize)
     plot.set_yticklabels(plot.get_yticklabels(), rotation=0, fontsize=8, va="center")
     plt.rcParams.update({'font.size': 8})
     plt.title(plotTitle)
