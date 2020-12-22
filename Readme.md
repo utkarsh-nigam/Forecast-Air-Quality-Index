@@ -12,15 +12,15 @@ Ozone (O3); PM 2.5; Sulphur Dioxide; Carbon Monoxide; PM 10; Nitrogen Dioxide
 
 ## Description of Dataset
 ### Plot of the dependent variable versus time
-![Alt text](/assets/plots/Description_1.png?raw=true "")
+![Alt text](/assets/plots/Description_1.png?raw=true "")   
 Above is the plot of dependent variable Air Quality Index (AQI) vs Time for the date range 24th July 2000 to 31st December 2019. We have highlighted the buckets for AQI to understand the severity of air pollution in this region.
 
 ### ACF of the dependent variable
-![Alt text](/assets/plots/ACF_AQI.png?raw=true "")
+![Alt text](/assets/plots/ACF_AQI.png?raw=true "")    
 Above is the ACF plot for 250 lags. We can observe that AQI values are highly correlated to past values, indicating the presence of non-stationarity.
 
 ### Correlation Matrix with seaborn heatmap and Pearson’s correlation coefficient
-![Alt text](/assets/plots/CorrPlot.png?raw=true "")
+![Alt text](/assets/plots/CorrPlot.png?raw=true "")     
 Following are the observations on AQI from the correlation plot above:  
 • All features except CO are positively correlated to AQI.  
 • Very highly correlated to presence of Ozone.  
