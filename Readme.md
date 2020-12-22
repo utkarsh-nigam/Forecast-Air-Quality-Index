@@ -43,22 +43,41 @@ All further training and data diagnostics will be performed using the train data
 Even though the Augmented Dickey Fuller Test and the Rolling Stats plot give an indication that the data set is stationary, but the ACF plot does provide evidence of non-stationarity. ADF Test results are subject to Type I and Type II errors, and hence, cannot be relied upon for this case.
 
 ![Alt text](/assets/plots/Stationarity_2.png?raw=true "")
-
+To make our data set stationary, we applied 1st Order Differencing, and diagnosed it again for stationarity. We can observe that the differenced data set is situated around a mean of 0. ACF Plot after 1st Order Differencing does give evidence that the data set has now become stationary. 
 ![Alt text](/assets/plots/Stationarity_3.png?raw=true "")
+Augmented Dickey Fuller Test and the Rolling Stats plot for the differenced data set also indicate that it is stationary. Rolling mean and variance become static at values of 0 and ~1000 respectively. Hence, we can now move ahead with our model building process.
 
+## Time Series Decomposition
+![Alt text](/assets/plots/STL_AQI.png?raw=true "")    
+We now decompose our data to understand the trend and seasonality components individually. Strength of Trend is 0.845, and Strength of Seasonality is 0.398. Hence, we can conclude that our data set has strong trend and moderate seasonality.  
+Since, we know our data set has high trend and moderate seasonal components, its good to comprehend whether they are additive or multiplicative.
+![Alt text](/assets/plots/STL_2.png?raw=true "")
+For Additive Time Series Decomposition of the AQI, we can notice high variance in the residuals here ranging from -100 to + 100.  
+For Multiplicative Time Series Decomposition of the AQI, we can notice low variance in the residuals here.  
+Based on the variance in the residuals of both types of decomposition, we can conclude that Multiplicative Decomposition is most suitable for our data set.
+![Alt text](/assets/plots/STL_3.png?raw=true "")
 
-### ACF of the dependent variable
-![Alt text](/assets/plots/.png?raw=true "")
-Above is the ACF plot for 250 lags. We can observe that AQI values are highly correlated to past values, indicating the presence of non-stationarity.
+## Base Models
+### Average Model
+![Alt text](/assets/plots/AVG.png?raw=true "") 
 
-### ACF of the dependent variable
-![Alt text](/assets/plots/.png?raw=true "")
-Above is the ACF plot for 250 lags. We can observe that AQI values are highly correlated to past values, indicating the presence of non-stationarity.
+### Naive Model
+![Alt text](/assets/plots/Naive.png?raw=true "")   
 
-### ACF of the dependent variable
-![Alt text](/assets/plots/.png?raw=true "")
-Above is the ACF plot for 250 lags. We can observe that AQI values are highly correlated to past values, indicating the presence of non-stationarity.
+### Drift Model
+![Alt text](/assets/plots/Drift.png?raw=true "")
 
+### Simple Exponential Smoothening Model
+![Alt text](/assets/plots/SES.png?raw=true "")
+
+## Holt-Winters Model
+![Alt text](/assets/plots/HW.png?raw=true "")
+
+## Feature Selection
+We performed feature selection based on the following attributes of the predictive accuracy metrics:
+• Adjusted R Square: Higher the better   
+• AIC Value: Lower the better    
+• BIC Value: Lower the better    
 
 
 
