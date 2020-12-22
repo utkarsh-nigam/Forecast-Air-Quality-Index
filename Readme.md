@@ -74,10 +74,81 @@ Based on the variance in the residuals of both types of decomposition, we can co
 ![Alt text](/assets/plots/HW.png?raw=true "")
 
 ## Feature Selection
-We performed feature selection based on the following attributes of the predictive accuracy metrics:
+We performed feature selection based on the following attributes of the predictive accuracy metrics:    
 • Adjusted R Square: Higher the better   
 • AIC Value: Lower the better    
 • BIC Value: Lower the better    
+### Forward Selection
+Approach towards Feature Selection:
+![Alt text](/assets/plots/Selection_1.png?raw=true "")    
+![Alt text](/assets/plots/Selection_2.png?raw=true "")     
+### Backward Selection
+Approach towards Feature Selection:
+![Alt text](/assets/plots/Selection_3.png?raw=true "")    
+![Alt text](/assets/plots/Selection_4.png?raw=true "")    
+### Results
+Following are the observations:    
+o Irrespective of the approach i.e., forward selection or backward elimination, we get same features for individual performance metrics.     
+o Adjusted R2 and AIC Value end with same list of features i.e., 'CO', 'Ozone', 'SO2', 'PM10' and 'PM25'.      
+o BIC Value leads to a model with 4 features i.e., 'Ozone', 'PM25', 'PM10' and 'CO'.     
+Therefore, we have decided to eliminate NO2 as it is not adding much value to the model in terms of any of the performance metric.     
+The final set of features we have decided to build a Multiple Regression Model are 'CO', 'Ozone', 'SO2', 'PM10', 'PM25'.     
+
+## Multiple Linear Regression
+![Alt text](/assets/plots/Regression_1.png?raw=true "")    
+Therefore, as per the T-Test Results, we can conclude that all of the selected features are statistically significant.
+![Alt text](/assets/plots/Regression_2.png?raw=true "")    
+Based on the Adjusted R2 value, we can say that the 91% of the variance in the value of “AQI” can be explained by this model.
+![Alt text](/assets/plots/Regression_3.png?raw=true "")    
+
+## ARMA Model
+### GPAC & Order Estimation
+![Alt text](/assets/plots/GPAC.png?raw=true "")    
+As per our understanding of the GPAC table, we can list the following orders that can be potentially used for ARMA model configuration:    
+(3,7); (6,6); (8,5); (9,9)
+
+However, after the performing the Chi-Squared Test for Whiteness of Residuals, none of the above listed orders could pass the same. Hence, we had to look for potential orders through Brute Force methodology, where in we evaluate each combination of (na , nb) for the whiteness test.
+Based on this approach, we were able to find out two combination of orders i.e., (4, 9) & (3, 9).    
+
+### Parameter Estimation
+Results for Order (na , nb): (4, 9)     
+![Alt text](/assets/plots/Order1_1.png?raw=true "")    
+
+Results for Order (na , nb): (3, 9)     
+![Alt text](/assets/plots/Order2_1.png?raw=true "")    
+
+### Parameter Diagnostic Outcomes
+#### Confidence Intervals
+Confidence intervals are calculated for the estimated parameters to check if they are statistically important. If zero includes inside the confidence interval, this means that the corresponding parameter is not important.     
+Order (4, 9): For b3 , b8 and b9 we have zero included in the confidence interval, hence they are not statistically important.     
+Order (3, 9): For a3 , b7 and b8 we have zero included in the confidence interval, hence they are not statistically important.     
+
+#### Zero/Pole Cancellation
+![Alt text](/assets/plots/Order12_2.png?raw=true "")    
+After zero/pole cancellation, the ARMA (4, 9) got converted to ARMA (3, 9) due to reduced order. Hence, we will be going forward with the ARMA (3, 9) model.
+
+### Chi Squared Test for Whiteness of Residuals
+Q-value is calculated for the residuals and chi-squared whiteness test is performed to check if the residuals were white.    
+![Alt text](/assets/plots/Order12_3.png?raw=true "")    
+
+### Other Performance Measures
+![Alt text](/assets/plots/Order12_4.png?raw=true "")    
+
+## ARMA Results
+![Alt text](/assets/plots/ARMA_1.png?raw=true "")    
+
+![Alt text](/assets/plots/ARMA.png?raw=true "")    
 
 
+## Final Model Selection
+![Alt text](/assets/plots/AllTable.png?raw=true "")    
+o Regression, Holt Winter, Naive and Drift Models have mean ~0, which means they are unbiased estimator.    
+o ARMA model has the lowest Q-Value, which means they have been able to extract the most information from the data.    
+o Regression model has the lowest Residual MSE and Variance. Also, the ratio of Variance of Forecast Errors and Residuals is very close to 0. Which means it is not overfitting.    
 
+## Conclusion
+o 1st Order differencing was done to make the raw data stationary.    
+o Time Series decomposition showed that data has strong trend and moderate seasonality.     
+o Feature selection process showed the most important attributes for AQI are 'CO', 'Ozone', 'SO2', 'PM10', 'PM25'.     
+o ARMA Model (3,9) passed the diagnostic test but did not capture the seasonal attributes.     
+o Best performing model is Regression model and Holt Winters Model. o Next steps to apply SARIMA in order to incorporate seasonality.     
