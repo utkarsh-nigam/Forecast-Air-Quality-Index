@@ -1,4 +1,4 @@
-# Predicting the Air Quality Index 
+# Forecasting Air Quality Index 
 
 ## Introduction
 
